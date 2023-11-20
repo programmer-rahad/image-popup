@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Image Popup Custom Plugin ( 07-03-2021 )</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      img {
+        max-width: 100%;
+      }
+
+      a {
+        display: inline-block;
+      }
+
+      .container {
+        padding-left: 15px;
+        padding-right: 15px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      @media (min-width: 768px) {
+        .container {
+          max-width: 720px;
+        }
+      }
+
+      @media (min-width: 992px) {
+        .container {
+          max-width: 970px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .container {
+          max-width: 1140px;
+        }
+      }
+
+      .row {
+        overflow: hidden;
+        margin-left: -15px;
+        margin-right: -15px;
+        padding-top: 80px;
+      }
+
+      .row .column {
+        float: left;
+        width: calc(100% / 3);
+        text-align: center;
+        line-height: 0;
+        padding-left: 11.5px;
+        padding-right: 11.5px;
+        height: 240px;
+      }
+
+      .row .column img {
+        cursor: pointer;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .image-popup-wrapper {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 99999;
+        background: rgba(0, 0, 0, 0.95);
+        text-align: center;
+      }
+
+      .image-popup-wrapper > div {
+        display: inline-block;
+        text-align: right;
+        margin-top: 50vh;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        width: 60%;
+        max-width: 650px;
+      }
+
+      @media (max-width: 991px) {
+        .image-popup-wrapper > div {
+          width: 70%;
+        }
+      }
+
+      @media (max-width: 767px) {
+        .image-popup-wrapper > div {
+          width: 90%;
+        }
+      }
+
+      .image-popup-wrapper > div img {
+        display: block;
+      }
+
+      .image-popup-wrapper > div a.close-image-popup {
+        position: relative;
+        width: 25px;
+        height: 25px;
+        margin-top: 10px;
+        margin-right: -3px;
+      }
+
+      .image-popup-wrapper > div a.close-image-popup::after,
+      .image-popup-wrapper > div a.close-image-popup::before {
+        position: absolute;
+        width: 25px;
+        height: 3px;
+        content: " ";
+        background-color: #fff;
+        left: 0;
+        top: 50%;
+        -webkit-transform: translateY(-50%) rotate(45deg);
+        transform: translateY(-50%) rotate(45deg);
+      }
+
+      .image-popup-wrapper > div a.close-image-popup::after {
+        -webkit-transform: translateY(-50%) rotate(-45deg);
+        transform: translateY(-50%) rotate(-45deg);
+      }
+    </style>
+  </head>
+  <body>
+    <section id="image-gallery">
+      <div class="container">
+        <div class="row">
+          <div class="column">
+            <img
+              src="https://images.unsplash.com/photo-1504700610630-ac6aba3536d3?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt=""
+            />
+          </div>
+          <div class="column">
+            <img
+              src="https://images.unsplash.com/photo-1485281645044-77dde536d602?q=80&w=1607&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt=""
+            />
+          </div>
+          <div class="column">
+            <img
+              src="https://images.unsplash.com/photo-1511030926441-d56167522e8a?q=80&w=1474&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt=""
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      !(function () {
+        "use strict";
+        // Selector
+        const $ = (selector, areAll) => {
+          const all = document.querySelectorAll(selector);
+          const single = document.querySelector(selector);
+          return areAll ? all : single;
+        };
+        const targets = $(".column img, .column a,.column button", true);
+        targets.forEach((target) => {
+          target.addEventListener("click", (e) => {
+            const imgSrc =
+              target.nodeName === "A"
+                ? target.href
+                : target.nodeName === "IMG"
+                ? target.src
+                : target.dataset.image;
+            const imagePopupWrapper = document.createElement("div");
+            imagePopupWrapper.className = "image-popup-wrapper";
+            imagePopupWrapper.innerHTML = `
+        <div>
+          <img src="${imgSrc}" />
+          <a href="#" class="close-image-popup"></a>
+        </div>
+      `;
+            document.body.insertAdjacentElement(
+              "afterbegin",
+              imagePopupWrapper
+            );
+            const closeBtn = $(".close-image-popup");
+            const closePopupWrapper = (e) => {
+              imagePopupWrapper.remove();
+              e.preventDefault();
+            };
+            closeBtn.addEventListener("click", closePopupWrapper);
+            window.addEventListener("keyup", (e) => {
+              e.keyCode === 27 && closeBtn.click();
+            });
+            e.preventDefault();
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
